@@ -1,5 +1,13 @@
 import { useState, useRef } from 'react';
-import { ListItem, Checkbox, Typography, IconButton, TextField, Stack, Paper } from '@mui/material';
+import {
+    ListItem,
+    Checkbox,
+    Typography,
+    IconButton,
+    TextField,
+    Stack,
+    Paper,
+} from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/Edit';
 import SaveIcon from '@mui/icons-material/Save';
@@ -20,7 +28,9 @@ interface TodoItemProps {
 function TodoItem(props: TodoItemProps) {
     const [isEditing, setIsEditing] = useState(false);
     const [editText, setEditText] = useState(props.todo.text);
-    const [editDueDate, setEditDueDate] = useState<Date | null>(props.todo.dueDate || null);
+    const [editDueDate, setEditDueDate] = useState<Date | null>(
+        props.todo.dueDate || null
+    );
     const inputRef = useRef<HTMLInputElement>(null);
 
     const handleEdit = () => {
@@ -45,160 +55,150 @@ function TodoItem(props: TodoItemProps) {
         }
     };
 
-    const isOverdue = props.todo.dueDate && !props.todo.completed && new Date() > new Date(props.todo.dueDate);
+    const isOverdue =
+        props.todo.dueDate &&
+        !props.todo.completed &&
+        new Date() > new Date(props.todo.dueDate);
 
     return (
-        <div style={{ width: '100%', position: 'relative' }}>
-            <Paper
-                elevation={0}
-                sx={{
-                    mb: 1.5,
-                    opacity: props.todo.completed ? 0.85 : 1,
-                    backgroundColor: props.todo.completed ? 'background.paper' : 'white',
-                    transition: 'all 0.25s ease',
-                    position: 'relative',
-                    width: '100%',
-                    height: 'auto',
-                    overflow: 'hidden',
-                    borderLeft: isOverdue ? '4px solid' : props.todo.completed ? '4px solid' : '4px solid',
-                    borderColor: isOverdue ? 'error.main' : props.todo.completed ? 'success.main' : 'primary.main',
-                    '&:hover': {
-                        transform: props.isDragging ? 'none' : 'translateY(-2px)',
-                    }
-                }}
-            >
-                <ListItem sx={{ py: 1.5 }}>
-                    {props.dragHandleProps && (
-                        <div {...props.dragHandleProps}>
-                            <IconButton
-                                size="small"
-                                disableRipple
-                                sx={{
-                                    cursor: 'grab',
-                                    mr: 1,
-                                    color: 'text.secondary',
-                                    '&:hover': {
-                                        color: 'primary.main',
-                                    },
-                                    '&:active': {
-                                        cursor: 'grabbing'
-                                    }
-                                }}
-                            >
-                                <DragIndicatorIcon />
-                            </IconButton>
-                        </div>
-                    )}
+        <Paper
+            elevation={0}
+            sx={{
+                opacity: props.todo.completed ? 0.85 : 1,
+                backgroundColor: props.todo.completed ? 'background.paper' : 'white',
+                transition: 'all 0.25s ease',
+                width: '100%',
+                overflow: 'hidden',
+                borderLeft: '4px solid',
+                borderColor: isOverdue
+                    ? 'error.main'
+                    : props.todo.completed
+                        ? 'success.main'
+                        : 'primary.main',
+                transform: props.isDragging ? 'scale(1.02)' : 'none',
+                position: 'relative',
+                zIndex: props.isDragging ? 1 : 'auto',
+            }}
+        >
+            <ListItem sx={{ py: 1.5 }}>
+                <IconButton
+                    size="small"
+                    {...props.dragHandleProps}
+                    disableRipple
+                    sx={{
+                        cursor: 'grab',
+                        mr: 1,
+                        color: 'text.secondary',
+                        '&:hover': { color: 'primary.main' },
+                        '&:active': { cursor: 'grabbing' },
+                    }}
+                >
+                    <DragIndicatorIcon />
+                </IconButton>
 
-                    <Checkbox
-                        checked={props.todo.completed}
-                        onChange={() => props.onToggle(props.todo.id)}
-                        sx={{
-                            mr: 1,
-                            color: 'primary.main',
-                            '&.Mui-checked': {
-                                color: 'success.main',
-                            },
-                            transition: 'all 0.2s ease'
-                        }}
-                        disabled={isEditing}
-                    />
+                {/* checkbox */}
+                <Checkbox
+                    checked={props.todo.completed}
+                    onChange={() => props.onToggle(props.todo.id)}
+                    sx={{
+                        mr: 1,
+                        color: 'primary.main',
+                        '&.Mui-checked': { color: 'success.main' },
+                        transition: 'all 0.2s ease',
+                    }}
+                    disabled={isEditing}
+                />
 
-                    {isEditing ? (
-                        <Stack direction="row" spacing={2} sx={{ width: '100%' }}>
-                            <TextField
-                                fullWidth
-                                value={editText}
-                                onChange={(e) => setEditText(e.target.value)}
-                                onKeyDown={handleKeyDown}
-                                inputRef={inputRef}
-                                size="small"
-                                autoFocus
-                            />
-                            <DatePicker
-                                value={editDueDate}
-                                onChange={(newDate: Date | null) => setEditDueDate(newDate)}
-                                slotProps={{ textField: { size: 'small' } }}
-                            />
-                            <IconButton
-                                onClick={handleSave}
-                                color="primary"
-                                sx={{
-                                    bgcolor: 'primary.light',
-                                    color: 'white',
-                                    '&:hover': {
-                                        bgcolor: 'primary.main',
-                                    }
-                                }}
-                            >
-                                <SaveIcon />
-                            </IconButton>
-                        </Stack>
-                    ) : (
-                        <>
-                            <Stack sx={{ flexGrow: 1 }}>
-                                <Stack direction="row" alignItems="center" spacing={1}>
-                                    <Typography
-                                        sx={{
-                                            textDecoration: props.todo.completed ? 'line-through' : 'none',
-                                            color: props.todo.completed ? 'text.disabled' : 'text.primary',
-                                            transition: 'all 0.2s ease',
-                                            wordBreak: 'break-word',
-                                            fontWeight: isOverdue && !props.todo.completed ? 500 : 400
-                                        }}
-                                    >
-                                        {props.todo.text}
-                                    </Typography>
-                                    {isOverdue && (
-                                        <WarningIcon color="error" fontSize="small" />
-                                    )}
-                                </Stack>
-
-                                {props.todo.dueDate && (
-                                    <Typography
-                                        variant="caption"
-                                        color={isOverdue ? 'error' : 'text.secondary'}
-                                        sx={{ fontWeight: isOverdue ? 500 : 400 }}
-                                    >
-                                        Due: {new Date(props.todo.dueDate).toLocaleDateString()}
-                                    </Typography>
+                {isEditing ? (
+                    <Stack direction="row" spacing={2} sx={{ width: '100%' }}>
+                        <TextField
+                            fullWidth
+                            value={editText}
+                            onChange={(e) => setEditText(e.target.value)}
+                            onKeyDown={handleKeyDown}
+                            inputRef={inputRef}
+                            size="small"
+                            autoFocus
+                        />
+                        <DatePicker
+                            value={editDueDate}
+                            onChange={(d: Date | null) => setEditDueDate(d)}
+                            slotProps={{ textField: { size: 'small' } }}
+                        />
+                        <IconButton
+                            onClick={handleSave}
+                            color="primary"
+                            sx={{
+                                bgcolor: 'primary.light',
+                                color: 'white',
+                                '&:hover': { bgcolor: 'primary.main' },
+                            }}
+                        >
+                            <SaveIcon />
+                        </IconButton>
+                    </Stack>
+                ) : (
+                    <>
+                        <Stack sx={{ flexGrow: 1 }}>
+                            <Stack direction="row" alignItems="center" spacing={1}>
+                                <Typography
+                                    sx={{
+                                        textDecoration: props.todo.completed
+                                            ? 'line-through'
+                                            : 'none',
+                                        color: props.todo.completed
+                                            ? 'text.disabled'
+                                            : 'text.primary',
+                                        transition: 'all 0.2s ease',
+                                        wordBreak: 'break-word',
+                                        fontWeight: isOverdue && !props.todo.completed ? 500 : 400,
+                                    }}
+                                >
+                                    {props.todo.text}
+                                </Typography>
+                                {isOverdue && (
+                                    <WarningIcon color="error" fontSize="small" />
                                 )}
                             </Stack>
 
-                            <Stack direction="row">
-                                <IconButton
-                                    onClick={handleEdit}
-                                    sx={{
-                                        color: 'secondary.main',
-                                        transition: 'all 0.2s',
-                                        '&:hover': {
-                                            color: 'secondary.dark',
-                                            transform: 'scale(1.1)'
-                                        }
-                                    }}
+                            {props.todo.dueDate && (
+                                <Typography
+                                    variant="caption"
+                                    color={isOverdue ? 'error' : 'text.secondary'}
+                                    sx={{ fontWeight: isOverdue ? 500 : 400 }}
                                 >
-                                    <EditIcon fontSize="small" />
-                                </IconButton>
-                                <IconButton
-                                    onClick={() => props.onDelete(props.todo.id)}
-                                    sx={{
-                                        color: 'error.main',
-                                        transition: 'all 0.2s',
-                                        '&:hover': {
-                                            color: 'error.dark',
-                                            transform: 'scale(1.1)'
-                                        }
-                                    }}
-                                >
-                                    <DeleteIcon fontSize="small" />
-                                </IconButton>
-                            </Stack>
-                        </>
-                    )}
-                </ListItem>
-            </Paper>
-        </div>
+                                    Due: {new Date(props.todo.dueDate).toLocaleDateString()}
+                                </Typography>
+                            )}
+                        </Stack>
+
+                        <Stack direction="row">
+                            <IconButton
+                                onClick={handleEdit}
+                                sx={{
+                                    color: 'secondary.main',
+                                    transition: 'all 0.2s',
+                                    '&:hover': { color: 'secondary.dark' },
+                                }}
+                            >
+                                <EditIcon fontSize="small" />
+                            </IconButton>
+                            <IconButton
+                                onClick={() => props.onDelete(props.todo.id)}
+                                sx={{
+                                    color: 'error.main',
+                                    transition: 'all 0.2s',
+                                    '&:hover': { color: 'error.dark' },
+                                }}
+                            >
+                                <DeleteIcon fontSize="small" />
+                            </IconButton>
+                        </Stack>
+                    </>
+                )}
+            </ListItem>
+        </Paper>
     );
-};
+}
 
 export default TodoItem;

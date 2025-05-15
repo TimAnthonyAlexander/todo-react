@@ -1,4 +1,5 @@
-import { Box, Typography, Container } from '@mui/material';
+import { Box, Typography, Container, Link } from '@mui/material';
+import GitHubIcon from '@mui/icons-material/GitHub';
 import TodoInput from './TodoInput';
 import TodoList from './TodoList';
 import TodoFilter from './TodoFilter';
@@ -10,7 +11,7 @@ function Todo() {
     return (
         <Container
             maxWidth="lg"
-            sx={{ py: 4 }}
+            sx={{ py: 4, position: 'relative', minHeight: '100vh' }}
         >
             <LocalizationProvider dateAdapter={AdapterDateFns}>
                 <TodoProvider>
@@ -57,6 +58,30 @@ function Todo() {
                     </Container>
                 </TodoProvider>
             </LocalizationProvider>
+
+            <Link
+                href="https://github.com/TimAnthonyAlexander/todo-react"
+                target="_blank"
+                sx={{
+                    position: 'fixed',
+                    bottom: 24,
+                    right: 24,
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: 1,
+                    color: 'primary.main',
+                    textDecoration: 'none',
+                    transition: 'color 0.2s ease',
+                    '&:hover': {
+                        color: 'primary.dark',
+                    }
+                }}
+            >
+                <GitHubIcon />
+                <Typography variant="body2" fontWeight="500">
+                    View on GitHub
+                </Typography>
+            </Link>
         </Container>
     );
 }
