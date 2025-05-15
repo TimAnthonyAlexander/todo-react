@@ -61,7 +61,12 @@ function TodoList() {
 
     return (
         <DragDropContext onDragEnd={handleDragEnd}>
-            <Droppable droppableId="todos">
+            <Droppable
+                droppableId="todos"
+                isDropDisabled={false}
+                isCombineEnabled={false}
+                ignoreContainerClipping={false}
+            >
                 {(provided: DroppableProvided) => (
                     <List
                         ref={provided.innerRef}
