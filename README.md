@@ -1,0 +1,1 @@
+# Empty react vite project
