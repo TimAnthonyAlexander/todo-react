@@ -43,8 +43,8 @@ function TodoList() {
     const handleDragEnd = ({ active, over }: DragEndEvent) => {
         if (!over || active.id === over.id) return;
 
-        const from = filteredTodos.findIndex((t) => t.id === active.id);
-        const to = filteredTodos.findIndex((t) => t.id === over.id);
+        const from = todos.findIndex(t => t.id === active.id);
+        const to = todos.findIndex(t => t.id === over.id);
 
         if (from !== -1 && to !== -1) reorderTodos(from, to);
     };
